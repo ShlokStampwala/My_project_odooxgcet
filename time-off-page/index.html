@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Time Off - Admin Panel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <div class="logo">Company Logo</div>
+    <nav>
+      <a href="#">Employees</a>
+      <a href="#">Attendance</a>
+      <a href="#" class="active">Time Off</a>
+    </nav>
+    <div class="profile"></div>
+  </header>
+
+  <!-- Sub Menu -->
+  <div class="sub-menu">
+    <button class="tab active">Time Off</button>
+    <button class="tab">Allocation</button>
+
+    <input type="text" placeholder="Search..." class="search" />
+  </div>
+
+  <!-- Leave Summary -->
+  <div class="summary">
+    <div>
+      <h3>Paid time off</h3>
+      <p>24 Days Available</p>
+    </div>
+    <div>
+      <h3>Sick time off</h3>
+      <p>07 Days Available</p>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Time Off Type</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>[Emp Name]</td>
+          <td>28/10/2025</td>
+          <td>28/10/2025</td>
+          <td class="blue">Paid time off</td>
+          <td>Pending</td>
+          <td>
+            <button class="reject">✖</button>
+            <button class="approve">✔</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>
