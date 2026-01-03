@@ -133,6 +133,7 @@ function getImg($file) { return (!empty($file) && file_exists("uploads/".$file))
         label { display: block; font-weight: bold; margin-bottom: 5px; }
         input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
     </style>
+    <link rel="stylesheet" href="global.css">
 </head>
 <body>
 

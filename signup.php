@@ -110,6 +110,7 @@ if (isset($_POST['register'])) {
         }
         #strength-msg { font-size: 12px; margin-top: -5px; margin-bottom: 10px; display: block; }
     </style>
+    <link rel="stylesheet" href="global.css">
 </head>
 <body>
     <div class="box">

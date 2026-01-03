@@ -1,0 +1,94 @@
+/* global.css */
+
+/* 1. INCREASE BASE FONT SIZE */
+:root {
+    --base-font-size: 18px; /* Changed from standard 16px */
+    --small-font-size: 15px;
+    --header-font-size: 28px;
+}
+
+body {
+    font-size: var(--base-font-size) !important;
+}
+
+/* 2. NAVBAR ADJUSTMENTS */
+.navbar {
+    height: 80px !important; /* Made navbar taller to fit larger text */
+}
+
+.logo-area {
+    font-size: 24px !important; /* Larger Logo Text */
+}
+
+.logo-area img {
+    height: 50px !important; /* Larger Logo Image */
+}
+
+.nav-links a {
+    font-size: 18px !important; /* Larger Menu Links */
+    padding: 26px 10px !important; /* Adjust padding to center in new height */
+}
+
+.nav-right a {
+    font-size: 16px !important; /* Logout button size */
+}
+
+/* 3. CARD & TEXT ADJUSTMENTS */
+h1, h2, .page-title {
+    font-size: 32px !important;
+}
+
+h3 {
+    font-size: 24px !important;
+}
+
+p, span, div {
+    /* Inherits base size, but ensures readability */
+    line-height: 1.6;
+}
+
+/* Employee Cards */
+.card-name {
+    font-size: 22px !important;
+}
+
+.card-role {
+    font-size: 16px !important;
+}
+
+.status-badge {
+    font-size: 24px !important; /* Larger Status Icons */
+}
+
+/* 4. FORM INPUTS & BUTTONS */
+input, select, textarea {
+    font-size: 18px !important;
+    padding: 12px 15px !important; /* Larger click area */
+}
+
+button, .btn-new, .btn-mark, .btn-save {
+    font-size: 18px !important;
+    padding: 12px 25px !important;
+}
+
+/* 5. TABLES */
+table th {
+    font-size: 18px !important;
+    padding: 15px !important;
+}
+
+table td {
+    font-size: 18px !important;
+    padding: 15px !important;
+}
+
+/* 6. STAT BOXES (Leaves Page) */
+.stat-item h3 {
+    font-size: 22px !important;
+}
+.stat-item p {
+    font-size: 16px !important;
+}
+.stat-val {
+    font-size: 24px !important;
+}

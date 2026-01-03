@@ -33,7 +33,9 @@ if (isset($_POST['login'])) {
         input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; background: #6c5ce7; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
         .success-msg { background: #d4edda; color: #155724; padding: 10px; border-radius: 6px; margin-bottom: 15px; text-align: left; font-size: 14px; border: 1px solid #c3e6cb; }
+
     </style>
+    <link rel="stylesheet" href="global.css">
 </head>
 <body>
     

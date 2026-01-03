@@ -123,6 +123,7 @@ $user_info = $conn->query("SELECT * FROM employees WHERE id=$uid")->fetch_assoc(
         td:last-child { border-right: none; }
         tr:nth-child(even) { background-color: #fafafa; }
     </style>
+    <link rel="stylesheet" href="global.css">
 </head>
 <body>
 

@@ -108,6 +108,7 @@ function getLogo($file) { return (!empty($file) && file_exists("uploads/".$file)
         .section-title { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px; color: #6c5ce7; }
         .btn-save { float: right; padding: 12px 30px; background: #6c5ce7; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 20px; }
     </style>
+    <link rel="stylesheet" href="global.css">
 </head>
 <body>
 
