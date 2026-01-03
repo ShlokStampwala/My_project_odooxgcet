@@ -112,9 +112,9 @@ function getImg($file) { return (!empty($file) && file_exists("uploads/".$file))
         
         /* Status Indicators */
         .status-badge { position: absolute; top: 15px; right: 15px; font-size: 18px; }
-        .status-present { color: #00b894; }
-        .status-leave { color: #0984e3; }
-        .status-absent { color: #fdcb6e; }
+        .status-present { color: #00b894; } /* Green */
+        .status-leave { color: #0984e3; }   /* Blue */
+        .status-absent { color: #fdcb6e; }  /* Yellow */
 
         .card-img {
             width: 80px; height: 80px; background: #dfe6e9; 
@@ -185,24 +185,31 @@ function getImg($file) { return (!empty($file) && file_exists("uploads/".$file))
                 $eid = $row['employee_code']; 
                 $db_id = $row['id'];
                 
-                // --- LOGIC: STATUS INDICATOR ---
-                // 1. Check Attendance (Present)
-                $is_present = $conn->query("SELECT * FROM attendance WHERE employee_id=$db_id AND date='$today'")->num_rows > 0;
+                // --- STATUS LOGIC ---
                 
-                // 2. Check Leaves (On Leave)
+                // 1. Check Leaves (Approved Leave for Today?)
+                // Checks if today is within start and end date AND status is 'Approved'
                 $leave_check = $conn->query("SELECT * FROM leaves WHERE employee_id=$db_id AND '$today' BETWEEN start_date AND end_date AND status='Approved'");
                 $is_leave = $leave_check->num_rows > 0;
 
-                // 3. Determine Icon & Class
+                // 2. Check Attendance (Present Today?)
+                // Checks if there is ANY entry for today (checked in)
+                $att_check = $conn->query("SELECT * FROM attendance WHERE employee_id=$db_id AND date='$today'");
+                $is_present = $att_check->num_rows > 0;
+
+                // 3. Determine Icon & Color
                 if ($is_leave) {
+                    // BLUE AIRPLANE (Leave)
                     $status_icon = '<i class="fas fa-plane"></i>';
                     $status_class = 'status-leave';
                     $tooltip = "On Leave";
                 } elseif ($is_present) {
+                    // GREEN DOT (Present)
                     $status_icon = '<i class="fas fa-circle" style="font-size:14px;"></i>';
                     $status_class = 'status-present';
                     $tooltip = "Present";
                 } else {
+                    // YELLOW DOT (Absent)
                     $status_icon = '<i class="fas fa-circle" style="font-size:14px;"></i>';
                     $status_class = 'status-absent';
                     $tooltip = "Absent";
