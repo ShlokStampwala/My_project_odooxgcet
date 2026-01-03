@@ -2,42 +2,37 @@
 session_start();
 include 'db.php';
 
-// --- THE SMART ID LOGIC ENGINE ---
+// --- SMART ID LOGIC (Your existing perfect logic) ---
 function generateSmartID($conn, $f_name, $l_name, $comp_name) {
-    // 1. Company Initials: First char of First Word + First char of Last Word
-    // Example: "Odoo India" -> O + I = OI
     $words = explode(" ", trim($comp_name));
     $c_first = strtoupper(substr($words[0], 0, 1));
     $c_last  = (count($words) > 1) ? strtoupper(substr(end($words), 0, 1)) : $c_first;
     $comp_code = $c_first . $c_last;
 
-    // 2. Person Initials: First 2 chars of First Name + First 2 chars of Last Name
-    // Example: "Raju Rastogi" -> RA + RA = RARA
     $p_code = strtoupper(substr(trim($f_name), 0, 2) . substr(trim($l_name), 0, 2));
+    $year = date("Y"); 
 
-    // 3. Year
-    $year = date("Y"); // 2026
-
-    // 4. Series (Auto Increment 0001)
-    $prefix = $comp_code . $p_code . $year;
-    
-    // Check Database for the last ID with this exact prefix
-    $sql = "SELECT employee_code FROM employees WHERE employee_code LIKE '$prefix%' ORDER BY employee_code DESC LIMIT 1";
+    $sql = "SELECT CAST(RIGHT(employee_code, 4) AS UNSIGNED) as max_seq 
+            FROM employees 
+            WHERE employee_code LIKE '%$year%' 
+            ORDER BY max_seq DESC LIMIT 1";
+            
     $result = $conn->query($sql);
 
     if ($result && $result->num_rows > 0) {
-        $last_code = $result->fetch_assoc()['employee_code'];
-        $last_num = intval(substr($last_code, -4)); // Extract last 4 digits
-        $new_num = str_pad($last_num + 1, 4, '0', STR_PAD_LEFT);
+        $row = $result->fetch_assoc();
+        $new_seq = $row['max_seq'] + 1;
     } else {
-        $new_num = "0001";
+        $new_seq = 1; 
     }
 
-    return $prefix . $new_num;
+    $prefix = $comp_code . $p_code . $year;
+    return $prefix . str_pad($new_seq, 4, '0', STR_PAD_LEFT);
 }
 
 // --- HANDLE SUBMISSION ---
 if (isset($_POST['register'])) {
+    $role  = $_POST['role']; // <--- 1. GET USER TYPE
     $cname = $_POST['company'];
     $fname = $_POST['fname'];
     $lname = $_POST['lname'];
@@ -46,18 +41,43 @@ if (isset($_POST['register'])) {
     $pass  = $_POST['pass'];
     $cpass = $_POST['cpass'];
 
+    $pattern = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/";
+    
     if ($pass !== $cpass) {
         $error = "Passwords do not match!";
+    } elseif (!preg_match($pattern, $pass)) {
+        $error = "Password is too weak!";
     } else {
-        // Generate the ID
-        $smart_id = generateSmartID($conn, $fname, $lname, $cname);
+        $new_id = generateSmartID($conn, $fname, $lname, $cname);
 
-        // Insert into Database
-        $stmt = $conn->prepare("INSERT INTO employees (employee_code, company_name, first_name, last_name, email, phone, password, role) VALUES (?, ?, ?, ?, ?, ?, ?, 'employee')");
-        $stmt->bind_param("sssssss", $smart_id, $cname, $fname, $lname, $email, $phone, $pass);
+        // Handle Files
+        $profile_pic = "default_user.png";
+        $company_logo = "default_logo.png";
+        $upload_dir = "uploads/";
+
+        if (!empty($_FILES['profile_pic']['name'])) {
+            $ext = pathinfo($_FILES['profile_pic']['name'], PATHINFO_EXTENSION);
+            $profile_name = $new_id . "_profile." . $ext; 
+            move_uploaded_file($_FILES['profile_pic']['tmp_name'], $upload_dir . $profile_name);
+            $profile_pic = $profile_name;
+        }
+
+        if (!empty($_FILES['company_logo']['name'])) {
+            $ext = pathinfo($_FILES['company_logo']['name'], PATHINFO_EXTENSION);
+            $logo_name = $new_id . "_logo." . $ext; 
+            move_uploaded_file($_FILES['company_logo']['tmp_name'], $upload_dir . $logo_name);
+            $company_logo = $logo_name;
+        }
+
+        // --- 2. UPDATE SQL TO INSERT ROLE ---
+        // Changed 'employee' string to ? (placeholder)
+        $stmt = $conn->prepare("INSERT INTO employees (employee_code, company_name, first_name, last_name, email, phone, password, role, profile_pic, company_logo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        
+        // Added $role to bind_param (10 's' characters now)
+        $stmt->bind_param("ssssssssss", $new_id, $cname, $fname, $lname, $email, $phone, $pass, $role, $profile_pic, $company_logo);
 
         if ($stmt->execute()) {
-            $_SESSION['success'] = "Account Created! <br> Your Employee ID is: <b>$smart_id</b> <br> Please Login.";
+            $_SESSION['success'] = "Account Created as <b>$role</b>! <br> ID: <b>$new_id</b>";
             header("Location: index.php");
             exit();
         } else {
@@ -73,38 +93,97 @@ if (isset($_POST['register'])) {
     <title>Sign Up - Dayflow</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); width: 400px; }
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); width: 450px; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; background: #6c5ce7; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-        h2 { text-align: center; color: #6c5ce7; margin-top: 0; }
         .half { display: flex; gap: 10px; }
+        .file-group { margin: 10px 0; font-size: 14px; }
+        .file-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        
+        .password-container { position: relative; width: 100%; }
+        .password-container input { padding-right: 40px; } 
+        .toggle-eye {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; font-size: 18px; background: none; border: none; color: #666;
+        }
+        #strength-msg { font-size: 12px; margin-top: -5px; margin-bottom: 10px; display: block; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2>Dayflow Registration</h2>
+        <h2 style="text-align:center; color:#6c5ce7;">Dayflow Registration</h2>
         <?php if(isset($error)) echo "<p style='color:red; text-align:center;'>$error</p>"; ?>
         
-        <form method="POST">
-            <label>Company Details</label>
-            <input type="text" name="company" placeholder="Company Name (e.g. Odoo India)" required>
+        <form method="POST" enctype="multipart/form-data">
             
-            <label>Personal Details</label>
+            <label><b>I am a:</b></label>
+            <select name="role" required style="border: 2px solid #6c5ce7; background: #f9f9f9;">
+                <option value="employee">Employee</option>
+                <option value="admin">HR Manager / Admin</option>
+            </select>
+
+            <label><b>Company Info</b></label>
+            <input type="text" name="company" placeholder="Company Name" required>
+            <div class="file-group">
+                <label>Company Logo (Optional)</label>
+                <input type="file" name="company_logo" accept="image/*">
+            </div>
+
+            <label><b>Personal Info</b></label>
             <div class="half">
                 <input type="text" name="fname" placeholder="First Name" required>
                 <input type="text" name="lname" placeholder="Last Name" required>
+            </div>
+            <div class="file-group">
+                <label>Profile Picture (Optional)</label>
+                <input type="file" name="profile_pic" accept="image/*">
             </div>
             
             <input type="email" name="email" placeholder="Email Address" required>
             <input type="text" name="phone" placeholder="Phone Number" required>
             
-            <label>Security</label>
-            <input type="password" name="pass" placeholder="Password" required>
+            <label><b>Security</b></label>
+            <div class="password-container">
+                <input type="password" name="pass" id="passInput" placeholder="Password" onkeyup="checkStrength()" required>
+                <span class="toggle-eye" onclick="togglePassword()">👁️</span>
+            </div>
+
+            <button type="button" onclick="generatePass()" style="width: 100%; margin: 5px 0 10px 0; background:#fab1a0; color:black;">
+                Generate Strong Password
+            </button>
+            <span id="strength-msg" style="color:red;">Min 8 chars, 1 Upper, 1 Lower, 1 Number, 1 Symbol</span>
+            
             <input type="password" name="cpass" placeholder="Confirm Password" required>
             
-            <button type="submit" name="register">Generate ID & Sign Up</button>
+            <button type="submit" name="register">Create Account</button>
         </form>
         <p style="text-align:center; font-size:14px;">Already have an ID? <a href="index.php" style="color:#6c5ce7;">Login</a></p>
     </div>
+
+    <script>
+        function generatePass() {
+            const chars = "ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz123456789!@#$%&*";
+            let pass = "";
+            for (let i = 0; i < 12; i++) { pass += chars.charAt(Math.floor(Math.random() * chars.length)); }
+            const input = document.getElementById("passInput");
+            input.value = pass; input.type = "text";
+            checkStrength(); 
+        }
+
+        function togglePassword() {
+            const input = document.getElementById("passInput");
+            const icon = document.querySelector(".toggle-eye");
+            if (input.type === "password") { input.type = "text"; icon.textContent = "🙈"; } 
+            else { input.type = "password"; icon.textContent = "👁️"; }
+        }
+
+        function checkStrength() {
+            const val = document.getElementById("passInput").value;
+            const msg = document.getElementById("strength-msg");
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (regex.test(val)) { msg.style.color = "green"; msg.innerHTML = "Strong Password! ✅"; } 
+            else { msg.style.color = "red"; msg.innerHTML = "Weak: Need Upper, Lower, Num, Symbol & 8+ chars"; }
+        }
+    </script>
 </body>
 </html>

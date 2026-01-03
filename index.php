@@ -51,8 +51,8 @@ if (isset($_POST['login'])) {
         </form>
 
         <div style="margin-top:20px; font-size:14px; display:flex; justify-content:space-between;">
-            <a href="#" style="color:#666; text-decoration:none;">Forgot Password?</a>
-            <a href="signup.php" style="color:#6c5ce7; font-weight:bold; text-decoration:none;">Create Account</a>
+<a href="forgot_password.php" style="color:#666; text-decoration:none;">Forgot Password?</a>            
+<a href="signup.php" style="color:#6c5ce7; font-weight:bold; text-decoration:none;">Create Account</a>
         </div>
     </div>
 </body>
