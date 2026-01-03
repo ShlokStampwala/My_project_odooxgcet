@@ -90,7 +90,9 @@ if (isset($_POST['register'])) {
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>Sign Up - Dayflow</title>
+    <link rel="icon" type="image/png" href="uploads/logo.jpg">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         .box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); width: 450px; }
@@ -111,6 +113,7 @@ if (isset($_POST['register'])) {
 </head>
 <body>
     <div class="box">
+         <img src="uploads/logo.jpg" alt="Logo" class="logo-img" style= 'width: 150px; margin-bottom: 10px; display:block; margin-left:auto; margin-right:auto;'>
         <h2 style="text-align:center; color:#6c5ce7;">Dayflow Registration</h2>
         <?php if(isset($error)) echo "<p style='color:red; text-align:center;'>$error</p>"; ?>
         

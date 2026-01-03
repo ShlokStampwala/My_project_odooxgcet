@@ -57,6 +57,7 @@ if (isset($_POST['change_pass'])) {
 <html>
 <head>
     <title>Reset Password</title>
+    <link rel="icon" type="image/png" href="uploads/logo.jpg">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #e0e0e0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .card { background: white; padding: 30px; width: 350px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-align: center; }

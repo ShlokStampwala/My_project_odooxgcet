@@ -48,6 +48,7 @@ function getImg($file) { return (!empty($file) && file_exists("uploads/".$file))
 <html>
 <head>
     <title>Dashboard - Dayflow</title>
+    <link rel="icon" type="image/png" href="uploads/logo.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #6c5ce7; --bg: #f5f6fa; --dark: #2d3436; }

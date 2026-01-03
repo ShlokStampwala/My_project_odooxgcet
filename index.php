@@ -26,6 +26,7 @@ if (isset($_POST['login'])) {
 <html>
 <head>
     <title>Login - Dayflow</title>
+    <link rel="icon" type="image/png" href="uploads/logo.jpg">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); width: 350px; text-align: center; }
@@ -35,8 +36,12 @@ if (isset($_POST['login'])) {
     </style>
 </head>
 <body>
+    
+   
     <div class="box">
-        <h2 style="color:#6c5ce7;">Dayflow HRMS</h2>
+        <img src="uploads/logo.jpg" alt="Logo" class="logo-img" style= 'width: 200px; margin-bottom: 10px'>
+
+        <h2 style="color:#6c5ce7;">Login to Dayflow</h2>
         
         <?php if(isset($_SESSION['success'])): ?>
             <div class="success-msg"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
